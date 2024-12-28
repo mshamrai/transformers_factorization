@@ -5,15 +5,21 @@ import copy
 
 
 class FactorLinear(nn.Module):
-    __constants__ = ['in_features', 'out_features']
+    __constants__ = ["in_features", "out_features"]
     in_features: int
     out_features: int
     U: torch.Tensor
     V: torch.Tensor
 
-    def __init__(self, U: nn.Parameter, V: nn.Parameter, bias: nn.Parameter=None, transpose:bool=False) -> None:
+    def __init__(
+        self,
+        U: nn.Parameter,
+        V: nn.Parameter,
+        bias: nn.Parameter = None,
+        transpose: bool = False,
+    ) -> None:
         super().__init__()
-        
+
         self.U = U
         self.V = V
         self.transpose = transpose
@@ -39,4 +45,4 @@ class FactorLinear(nn.Module):
         return output
 
     def extra_repr(self) -> str:
-        return f'in_features={self.in_features}, out_features={self.out_features}, bias={self.bias is not None}'
+        return f"in_features={self.in_features}, out_features={self.out_features}, bias={self.bias is not None}"

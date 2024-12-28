@@ -3,7 +3,7 @@ import numpy as np
 from factor_linear import FactorLinear
 
 
-def find_layers(module, layers=[nn.Linear], name=''):
+def find_layers(module, layers=[nn.Linear], name=""):
     """
     Recursively find the layers of a certain type in a module.
 
@@ -19,9 +19,11 @@ def find_layers(module, layers=[nn.Linear], name=''):
         return {name: module}
     res = {}
     for name1, child in module.named_children():
-        res.update(find_layers(
-            child, layers=layers, name=name + '.' + name1 if name != '' else name1
-        ))
+        res.update(
+            find_layers(
+                child, layers=layers, name=name + "." + name1 if name != "" else name1
+            )
+        )
     return res
 
 
@@ -50,31 +52,38 @@ def group_layers(layers):
             bias = layer.bias
 
         if shape[0] in groups:
-            groups[shape[0]].append({
-                "name": name,  
-                "tensor": data,
-                "shape": shape,
-                "transpose": shape[0] != shape[1],
-                "bias": bias
-            })
+            groups[shape[0]].append(
+                {
+                    "name": name,
+                    "tensor": data,
+                    "shape": shape,
+                    "transpose": shape[0] != shape[1],
+                    "bias": bias,
+                }
+            )
         elif shape[1] in groups:
-            groups[shape[1]].append({
-                "name": name,  
-                "tensor": data,
-                "shape": shape,
-                "transpose": False,
-                "bias": bias
-            })
+            groups[shape[1]].append(
+                {
+                    "name": name,
+                    "tensor": data,
+                    "shape": shape,
+                    "transpose": False,
+                    "bias": bias,
+                }
+            )
         else:
-            groups[min(shape)] = [{
-                "name": name,  
-                "tensor": data,
-                "shape": shape,
-                "transpose": min(shape) == shape[0] and shape[0] != shape[1],
-                "bias": bias
-            }]
-            
+            groups[min(shape)] = [
+                {
+                    "name": name,
+                    "tensor": data,
+                    "shape": shape,
+                    "transpose": min(shape) == shape[0] and shape[0] != shape[1],
+                    "bias": bias,
+                }
+            ]
+
     return groups
+
 
 def concat_group(group):
     result = []
@@ -89,7 +98,7 @@ def update_model(model, group, U, V):
     V = nn.Parameter(V)
     for l in group:
         n_i = l["shape"][0] if not l["transpose"] else l["shape"][1]
-        U_i = U[cumulative_n:cumulative_n + n_i, :]
+        U_i = U[cumulative_n : cumulative_n + n_i, :]
         cumulative_n += n_i
 
         U_i = nn.Parameter(U_i)
