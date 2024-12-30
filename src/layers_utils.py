@@ -1,6 +1,6 @@
 import torch.nn as nn
 import numpy as np
-from factor_linear import FactorLinear
+from src.factor_linear import FactorLinear
 
 
 def find_layers(module, layers=[nn.Linear], name=""):

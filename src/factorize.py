@@ -5,8 +5,8 @@ import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModel
 import numpy as np
 
-import layers_utils
-import export
+import src.layers_utils
+import src.export
 
 
 def factorize(grouped_tensor, k):

@@ -3,3 +3,4 @@ transformers
 onnx 
 onnxscript
 onnxruntime
+accelerate>=0.26.0
