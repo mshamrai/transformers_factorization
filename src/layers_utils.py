@@ -100,3 +100,15 @@ def update_model(model, group, U, V):
 
         fac_linear = FactorLinear(U_i, V, l["bias"], transpose=l["transpose"])
         replace_layer(model, fac_linear, l["name"].split("."))
+
+
+def max_k(shapes):
+    m = min(shapes[0])
+    ns = [max(shape) for shape in shapes]
+    numerator = m * sum(ns)
+    denominator = sum(ns) + m
+    return numerator / denominator
+
+
+def get_k(compress_rate, shapes):
+    return max_k(shapes) * (1 - compress_rate)
