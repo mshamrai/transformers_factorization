@@ -39,6 +39,10 @@ def replace_layer(module, layer, name_path):
                 setattr(child, name_suffix[0], layer)
                 print("Layer replaced!")
                 return
+            elif len(name_suffix) == 0:
+                setattr(module, name_prefix, layer)
+                print("Layer replaced!")
+                return
     print(f"Didn't find {name_path}")
 
 
@@ -47,37 +51,28 @@ def group_layers(layers):
     for name, layer in layers.items():
         data = layer.weight.detach().numpy()
         shape = data.shape
+        min_shape = min(shape)
         bias = None
         if isinstance(layer, nn.Linear):
             bias = layer.bias
 
-        if shape[0] in groups:
-            groups[shape[0]].append(
+        if min_shape in groups:
+            groups[min_shape].append(
                 {
                     "name": name,
                     "tensor": data,
                     "shape": shape,
-                    "transpose": shape[0] != shape[1],
-                    "bias": bias,
-                }
-            )
-        elif shape[1] in groups:
-            groups[shape[1]].append(
-                {
-                    "name": name,
-                    "tensor": data,
-                    "shape": shape,
-                    "transpose": False,
+                    "transpose": shape[0] < shape[1],
                     "bias": bias,
                 }
             )
         else:
-            groups[min(shape)] = [
+            groups[min_shape] = [
                 {
                     "name": name,
                     "tensor": data,
                     "shape": shape,
-                    "transpose": min(shape) == shape[0] and shape[0] != shape[1],
+                    "transpose": shape[0] < shape[1],
                     "bias": bias,
                 }
             ]
